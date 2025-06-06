@@ -1,4 +1,4 @@
-![icon](https://github.com/user-attachments/assets/5990c94d-bbe7-4d6a-964b-cd012a7bf50c)
+![icon](https://github.com/user-attachments/assets/5990c94d-bbe7-4d6a-964b-cd012a7bf50c =250x250)
 # FicappX
 ## Неофициальное приложение для чтения фанфиков и статей с сайта [ficbook.net](https://ficbook.net)
 - Поиск по меткам, фандомам, возрастному рейтингу
