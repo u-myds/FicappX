@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import okhttp3.Headers
 import okhttp3.OkHttpClient
+import u.ficappx.ui.components.fragments.settings.SettingsFragment
 import kotlin.system.exitProcess
 
 
@@ -94,7 +95,7 @@ class MainActivity : ComponentActivity() {
                                     AnimatedVisibilityFadeInOut(
                                         visible = currentState == FragmentState.SETTINGS
                                     ) {
-
+                                        SettingsFragment(innerPadding)
                                     }
 
                                 }
