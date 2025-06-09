@@ -33,10 +33,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +46,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.Headers
 import okhttp3.OkHttpClient
+import u.ficappx.api.mobile.FicbookMobileAPI
 import u.ficappx.ui.components.fragments.settings.SettingsFragment
 import kotlin.system.exitProcess
 
@@ -66,9 +71,9 @@ class MainActivity : ComponentActivity() {
             cookiesPresentedAndValid = remember { mutableStateOf(false) }
             var currentState by remember { mutableStateOf(FragmentState.SEARCH) }
             val context = LocalContext.current
+            var mobileApi = FicbookMobileAPI()
             exceptionHandler(context)
             FicappXTheme() {
-
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     bottomBar = {
                         if(cookiesPresentedAndValid.value) {
@@ -83,7 +88,7 @@ class MainActivity : ComponentActivity() {
                                     AnimatedVisibilityFadeInOut(
                                         visible = currentState == FragmentState.SEARCH
                                     ) {
-                                        SearchFragment(ficbookAPI!!, searchSaver, innerPadding)
+                                        SearchFragment(ficbookAPI!!, searchSaver, innerPadding, mobileApi)
                                     }
 
                                     AnimatedVisibilityFadeInOut(

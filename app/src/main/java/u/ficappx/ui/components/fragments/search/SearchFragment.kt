@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,11 +52,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import u.ficappx.api.mobile.FicbookMobileAPI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchFragment(ficbookAPI: FicbookAPI, searchSaver: SearchFragmentSaver, p: PaddingValues) {
+fun SearchFragment(ficbookAPI: FicbookAPI, searchSaver: SearchFragmentSaver, p: PaddingValues, mobileAPI: FicbookMobileAPI? = null) {
     val coroutineScope = rememberCoroutineScope()
+
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
@@ -121,6 +124,9 @@ fun SearchFragment(ficbookAPI: FicbookAPI, searchSaver: SearchFragmentSaver, p: 
     }
 
     LaunchedEffect(Unit) {
+        coroutineScope.launch(Dispatchers.IO) {
+            mobileAPI?.generate()
+        }
         if (searchSaver.fanfics.isNotEmpty()) fanfics.addAll(searchSaver.fanfics)
         if (searchSaver.page != 1) page = searchSaver.page
         if (searchSaver.filterState != null) {
@@ -146,6 +152,7 @@ fun SearchFragment(ficbookAPI: FicbookAPI, searchSaver: SearchFragmentSaver, p: 
                             IconButton(onClick = { searchOnClick() }) {
                                 Icon(Icons.Default.Search, "")
                             }
+
                         }
                     },
                     expanded = false,

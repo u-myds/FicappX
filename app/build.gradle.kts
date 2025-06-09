@@ -18,8 +18,8 @@ android {
         applicationId = "u.ficappx"
         minSdk = 28
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.0.1a${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))}"
+        versionCode = 2
+        versionName = "0.0.2${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))}"
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.svg)
+    implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

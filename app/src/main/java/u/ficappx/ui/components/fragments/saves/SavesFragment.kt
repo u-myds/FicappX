@@ -21,13 +21,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import u.ficappx.api.mobile.FicbookMobileAPI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SavesFragment(p: PaddingValues){
     val db = DBHelper(LocalContext.current)
 
-
+    val mobileAPI = FicbookMobileAPI()
 
     var needUpdate by remember { mutableStateOf(true) }
     var fanfics by remember { mutableStateOf(listOf<Fanfic>()) }
@@ -37,12 +38,13 @@ fun SavesFragment(p: PaddingValues){
             fanfics = db.getAllFanfics().reversed()
             needUpdate = false
         }
+
     }
     PullToRefreshBox(needUpdate, {needUpdate = true}) {
         Box(modifier = Modifier.padding(p)){
             LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(fanfics) { fanfic ->
-                    FanficView(fanfic, onClickTag = {})
+                    FanficView(fanfic,onClickTag = {})
                 }
             }
         }

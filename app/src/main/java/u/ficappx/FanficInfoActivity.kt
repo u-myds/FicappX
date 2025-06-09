@@ -32,9 +32,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import u.ficappx.api.mobile.FicbookMobileAPI
+import u.ficappx.api.mobile.PartMobile
+import u.ficappx.ui.components.fragments.settings.Settings
 
 class FanficInfoActivity : ComponentActivity() {
     @Suppress("DEPRECATION")
@@ -48,27 +52,42 @@ class FanficInfoActivity : ComponentActivity() {
         if (fanfic == null) finishActivity(1)
 
         setContent {
-            var parted = remember { mutableStateOf(false) }
             FicappXTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    View(innerPadding, parted, fanfic!!)
-
+                    View(innerPadding, fanfic!!)
                 }
             }
         }
     }
     @Composable
-    fun View(p: PaddingValues, parted: MutableState<Boolean>, fanfic: Fanfic){
+    fun View(p: PaddingValues, fanfic: Fanfic){
         val coroutineScope = rememberCoroutineScope()
+        var context = LocalContext.current
+        var settings = Settings(context)
         var parts by remember { mutableStateOf(listOf<Part>()) }
         var text by remember { mutableStateOf("") }
         LaunchedEffect(Unit) {
-            coroutineScope.launch(Dispatchers.IO) {
-                val partsE = FicbookAPI.fanficParts(fanfic.url)
-                val textE = FicbookAPI.fanficText(fanfic.url)
-                if(partsE != null) parts = partsE
-                if(textE != null) text = textE
+            if(settings.use_mobile_api.value == 1) {
+                coroutineScope.launch(Dispatchers.IO) {
+                    var partsMobile = FicbookMobileAPI().getParts(fanfic.url.split("/").last())?.data?.parts
+                    var converted = mutableListOf<Part>()
+                    if(partsMobile != null){
+                        for(part in partsMobile){
+                            converted.add(part.convertToPart())
+                        }
+                        parts = converted
+                    }
+                }
             }
+            else{
+                coroutineScope.launch(Dispatchers.IO) {
+                    val partsE = FicbookAPI.fanficParts(fanfic.url)
+                    val textE = FicbookAPI.fanficText(fanfic.url)
+                    if(partsE != null) parts = partsE
+                    if(textE != null) text = textE
+                }
+            }
+
         }
         SelectionContainer {
             Box(modifier = Modifier.padding(p)){

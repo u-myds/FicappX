@@ -41,53 +41,58 @@ import androidx.core.text.isDigitsOnly
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import u.ficappx.R
+import u.ficappx.api.mobile.FicbookMobileAPI
+import u.ficappx.ui.components.fragments.settings.Settings
 
 
 @Composable
-fun FanficView(fanfic: Fanfic, onClickTag: (Tag) -> (Unit)){
+fun FanficView(fanfic: Fanfic,onClickTag: (Tag) -> (Unit)){
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val db = DBHelper(context)
+    val settings = Settings(context)
     var isSaved by remember { mutableStateOf(db.exists(fanfic)) }
     Box(
         modifier = Modifier.wrapContentSize(Alignment.TopStart).clip(RoundedCornerShape(16.dp)).background(MaterialTheme.colorScheme.secondaryContainer).fillMaxWidth().padding(4.dp, 4.dp)
             .clickable {
                 coroutineScope.launch(Dispatchers.IO) {
-                    if (FicbookAPI.fanficText(fanfic.url) != null){
-                        val readActivity = Intent(context, ReadActivity::class.java)
-                        val bundle = Bundle().apply { putString("url", fanfic.url) }
-                        readActivity.putExtras(bundle)
-                        context.startActivity(readActivity)
-                    }
-                    else{
+                    if(settings.use_mobile_api.value == 1){
                         val fanficInfo = Intent(context, FanficInfoActivity::class.java)
-                        val bundle = Bundle().apply { putParcelable("fanfic",fanfic) }
+                        val bundle = Bundle().apply { putParcelable("fanfic",fanfic)}
                         fanficInfo.putExtras(bundle)
                         context.startActivity(fanficInfo)
                     }
+                    else{
+                        if (FicbookAPI.fanficText(fanfic.url) != null){
+                            val readActivity = Intent(context, ReadActivity::class.java)
+                            val bundle = Bundle().apply { putString("url", fanfic.url)}
+                            readActivity.putExtras(bundle)
+                            context.startActivity(readActivity)
+                        }
+                        else{
+                            val fanficInfo = Intent(context, FanficInfoActivity::class.java)
+                            val bundle = Bundle().apply { putParcelable("fanfic",fanfic)}
+                            fanficInfo.putExtras(bundle)
+                            context.startActivity(fanficInfo)
+                        }
+                    }
+
                 }
 
 
             }
     ){
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(bottom = 2.dp).weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 0.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.weight(1f)) {
                     for(b in fanfic.badges) {
                         if(!b.name.isDigitsOnly()) BadgeView(b)
                     }
                 }
                 Row(horizontalArrangement = Arrangement.End){
-                    if(isSaved){
                         IconButton(onClick = {db.putOrDelete(fanfic); isSaved = db.exists(fanfic)}) {
-                            Icon(painterResource(R.drawable.bookmark_filled), "")
+                            Icon(painterResource(if(isSaved){R.drawable.bookmark_filled} else {R.drawable.bookmark}), "")
                         }
-                    }
-                    else{
-                        IconButton(onClick = {db.putOrDelete(fanfic); isSaved = db.exists(fanfic)}) {
-                            Icon(painterResource(R.drawable.bookmark), "")
-                        }
-                    }
                 }
             }
 
