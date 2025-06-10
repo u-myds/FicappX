@@ -15,21 +15,25 @@
         android:theme="@style/Theme.FicappX"
         tools:targetApi="31">
         <activity
-            android:name="u.ficappx.FanficInfoActivity"
+            android:name=".AuthorAccountAcitvity"
+            android:exported="false"
+            android:label="@string/title_activity_author_account_acitvity"
+            android:theme="@style/Theme.FicappX" />
+        <activity
+            android:name=".FanficInfoActivity"
             android:exported="false"
             android:label="@string/title_activity_fanfic_info"
             android:theme="@style/Theme.FicappX" />
         <activity
-            android:name="u.ficappx.ReadActivity"
+            android:name=".ReadActivity"
             android:exported="false"
             android:label="@string/title_activity_read"
             android:theme="@style/Theme.FicappX" />
         <activity
-            android:name="u.ficappx.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.FicappX"
-            android:windowSoftInputMode="adjustResize"
-            >
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

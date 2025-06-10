@@ -1,7 +1,7 @@
 package u.ficappx.api
 
 import u.ficappx.api.classes.Part
-import u.ficappx.api.classes.SearchPageData
+import u.ficappx.api.classes.PageData
 import u.ficappx.api.serialization.FandomSearch
 
 import u.ficappx.api.serialization.SearchFandomResult
@@ -14,11 +14,12 @@ import okhttp3.Headers
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import u.ficappx.api.classes.AuthorInfo
 
 const val SCHEME = "https"
 const val HOST = "ficbook.net"
-class FicbookAPI(val client: OkHttpClient, val headers: Headers) {
-    fun fanfics(query: String, page: Int = 1, includes: List<Pair<String, String>>?= null): SearchPageData?{
+class FicbookAPI(private val client: OkHttpClient, private val headers: Headers) {
+    fun fanfics(query: String, page: Int = 1, includes: List<Pair<String, String>>?= null): PageData?{
         val url = HttpUrl.Builder().scheme(SCHEME).host(HOST).addPathSegment("find-fanfics-846555")
             .addQueryParameter("title", query)
             .addQueryParameter("p", page.toString())
@@ -122,6 +123,25 @@ class FicbookAPI(val client: OkHttpClient, val headers: Headers) {
             val js = Json { ignoreUnknownKeys = true }
             val responseParsed = js.decodeFromString<SearchFandomResult>(body)
             callback(responseParsed.data.result)
+        }
+    }
+
+    object AuthorApi{
+        fun fullInfo(url: String, page: Int = 1) : AuthorInfo?{
+            val client = OkHttpClient.Builder().build()
+            val urlBuilded = HttpUrl.Builder().scheme(SCHEME).host(HOST).addPathSegments(url.replaceFirst("/", ""))
+                .addPathSegment("profile")
+                .addPathSegment("works")
+                .addQueryParameter("p", page.toString())
+                .build()
+            val request = Request.Builder().url(urlBuilded).build()
+            val response = client.newCall(request).execute()
+            if(!response.isSuccessful) {
+                println("Null on Author on url: ${urlBuilded.toString()}")
+                return null
+            }
+            val body = response.body!!.string()
+            return Parser.AuthorPage.fullParse(body)
         }
     }
 

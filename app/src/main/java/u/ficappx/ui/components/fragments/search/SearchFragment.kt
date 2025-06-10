@@ -1,5 +1,6 @@
 package u.ficappx.ui.components.fragments.search
 
+import android.widget.Toast
 import u.ficappx.api.FicbookAPI
 import u.ficappx.api.classes.Fanfic
 import u.ficappx.api.classes.Tag
@@ -182,6 +183,7 @@ fun SearchFragment(ficbookAPI: FicbookAPI, searchSaver: SearchFragmentSaver, p: 
                     LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(8.dp), state = lazyState) {
                         items(fanfics) { fanfic ->
                             FanficView(fanfic) { tag ->
+                                Toast.makeText(context, "Смотрим на ${tag.name}", Toast.LENGTH_LONG).show()
                                 lastTag = tag
                                 page = 1
                                 performSearch(query, page)

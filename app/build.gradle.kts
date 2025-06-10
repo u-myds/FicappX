@@ -18,8 +18,8 @@ android {
         applicationId = "u.ficappx"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.0.2${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))}"
+        versionCode = 3
+        versionName = "0.0.3"
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -32,7 +32,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            applicationIdSuffix = ".release${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))}"
+            applicationIdSuffix = ".release"
         }
 
     }
@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.jsoup)
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.svg)
     implementation(libs.kotlinx.datetime)

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import u.ficappx.AuthorAccountAcitvity
 import u.ficappx.R
 import u.ficappx.api.mobile.FicbookMobileAPI
 import u.ficappx.ui.components.fragments.settings.Settings
@@ -97,12 +98,17 @@ fun FanficView(fanfic: Fanfic,onClickTag: (Tag) -> (Unit)){
             }
 
             Text(fanfic.name, style = MaterialTheme.typography.titleLarge)
-            Text("Фэндом: ${fanfic.fandoms.joinToString { fandom -> fandom.name }}", style = MaterialTheme.typography.bodySmall)
-            Text("Aвтор: ${fanfic.author.name}", modifier = Modifier.clickable {  })
+            Text("Фэндом: ${fanfic.fandoms.joinToString { fandom -> fandom.name }}", style = MaterialTheme.typography.bodyMedium)
+            Text("Aвтор: ${fanfic.author.name}", modifier = Modifier.clickable {
+                val intent = Intent(context, AuthorAccountAcitvity::class.java)
+                val bundle = Bundle().apply { putParcelable("author",fanfic.author)}
+                intent.putExtras(bundle)
+                context.startActivity(intent)
+            }, style = MaterialTheme.typography.bodyLarge)
             FlowRow(verticalArrangement = Arrangement.spacedBy(4.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 fanfic.tags.forEach{ tag ->
                     TagView(tag) {
-                        Toast.makeText(context, "Смотрим на ${tag.name}", Toast.LENGTH_LONG).show()
+                        //Toast.makeText(context, "Смотрим на ${tag.name}", Toast.LENGTH_LONG).show()
                         onClickTag(it)
                     }
                 }

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Parcelize
 @Serializable
-data class SearchPageData(
+data class PageData(
     val fanfics: List<Fanfic>,
     val currentPage: Int,
     val lastPage: Int,

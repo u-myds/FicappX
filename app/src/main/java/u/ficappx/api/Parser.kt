@@ -5,11 +5,12 @@ import u.ficappx.api.classes.Badge
 import u.ficappx.api.classes.Fandom
 import u.ficappx.api.classes.Fanfic
 import u.ficappx.api.classes.Part
-import u.ficappx.api.classes.SearchPageData
+import u.ficappx.api.classes.PageData
 import u.ficappx.api.classes.Tag
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Safelist
+import u.ficappx.api.classes.AuthorInfo
 
 class Parser {
     object Search{
@@ -139,17 +140,17 @@ class Parser {
             return t
         }
 
-        fun fullParse(html: String): SearchPageData {
-            val parceable = Jsoup.parse(html)
-            val names = namesFromDocument(parceable)
-            val urls = urlsFromDocument(parceable)
-            val tags = tagsFromDocument(parceable)
-            val authors = authorsFromDocument(parceable)
-            val authorUrls = authorsUrlsFromDocument(parceable)
-            val badges = badgesFromDocument(parceable)
-            val descriptions = descriptionsFromDocument(parceable)
+        fun fullParse(html: String): PageData {
+            val parseable = Jsoup.parse(html)
+            val names = namesFromDocument(parseable)
+            val urls = urlsFromDocument(parseable)
+            val tags = tagsFromDocument(parseable)
+            val authors = authorsFromDocument(parseable)
+            val authorUrls = authorsUrlsFromDocument(parseable)
+            val badges = badgesFromDocument(parseable)
+            val descriptions = descriptionsFromDocument(parseable)
             val fanfics = mutableListOf<Fanfic>()
-            val fandoms = fandomsFromDocument(parceable)
+            val fandoms = fandomsFromDocument(parseable)
             println(fandoms)
             for(index in names.indices){
                 fanfics.add(
@@ -164,10 +165,10 @@ class Parser {
                     )
                 )
             }
-            return SearchPageData(
+            return PageData(
                 fanfics,
-                pageFromDocument(document = parceable),
-                lastPageFromDocument(document = parceable),
+                pageFromDocument(document = parseable),
+                lastPageFromDocument(document = parseable),
                 nothingFound = "Не удалось найти ничего с указанными вами параметрами." in html
             )
         }
@@ -202,7 +203,23 @@ class Parser {
             val textFinal = text.replace("&nbsp;", " ")
             return textFinal
         }
+    }
 
+    object AuthorPage {
+        fun getName(document: Document): String{
+            return document.select(".user-name").first()?.text() ?: "?"
+        }
 
+        fun getImageUrl(document: Document): String {
+            return document.select("div.avatar-cropper").first()?.select("img")?.first()?.attr("src") ?: "https://assets.teinon.net/assets/design/default_avatar.png"
+        }
+
+        fun fullParse(html: String): AuthorInfo{
+            val parseable = Jsoup.parse(html)
+            val name = getName(parseable)
+            val imageUrl = getImageUrl(parseable)
+            val fanfics = Search.fullParse(html)
+            return AuthorInfo(name, imageUrl, fanfics)
+        }
     }
 }
