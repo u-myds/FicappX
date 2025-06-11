@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION ) {
     companion object{
         private const val DATABASE_NAME = "fanfic_saved_db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         private const val TABLE_FANFICS = "fanfics"
         private const val COLUMN_ID = "id"
         private const val COLUMN_NAME = "name"
@@ -21,8 +21,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         private const val COLUMN_URL = "url"
         private const val COLUMN_SHORT_DESCRIPTION = "short_description"
         private const val COLUMN_FANDOMS = "fandoms"
+        private const val COLUMN_PARTS_COUNT = "parts_count"
     }
-    private val json = Json { ignoreUnknownKeys = true }
 
     override fun onCreate(db: SQLiteDatabase) {
         val createTableSql = """
@@ -34,7 +34,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 $COLUMN_BADGES TEXT NOT NULL,
                 $COLUMN_URL TEXT NOT NULL,
                 $COLUMN_SHORT_DESCRIPTION TEXT NOT NULL,
-                $COLUMN_FANDOMS TEXT NOT NULL
+                $COLUMN_FANDOMS TEXT NOT NULL,
+                $COLUMN_PARTS_COUNT INTEGER NOT NULL
             )
         """.trimIndent()
         db.execSQL(createTableSql)
@@ -55,6 +56,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             put(COLUMN_URL, fanfic.url)
             put(COLUMN_SHORT_DESCRIPTION, fanfic.shortDescription)
             put(COLUMN_FANDOMS, Converters.fromFandomList(fanfic.fandoms))
+            put(COLUMN_PARTS_COUNT, fanfic.partsCount)
         }
         val id = db.insert(TABLE_FANFICS, null, appendValues)
         db.close()
@@ -82,7 +84,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 COLUMN_SHORT_DESCRIPTION
             ))
             val fandomsJson = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FANDOMS))
-
+            val partsCount = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTS_COUNT))
             fanfic = Fanfic(
                 name = name,
                 author = Converters.toAuthor(authorJson),
@@ -90,7 +92,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 badges = Converters.toBadgeList(badgesJson),
                 url = url,
                 shortDescription = shortDescription,
-                fandoms = Converters.toFandomList(fandomsJson)
+                fandoms = Converters.toFandomList(fandomsJson),
+                partsCount = partsCount
             )
         }
         cursor.close()
@@ -114,7 +117,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     COLUMN_SHORT_DESCRIPTION
                 ))
                 val fandomsJson = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FANDOMS))
-
+                val partsCount = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PARTS_COUNT))
                 val fanfic = Fanfic(
                     name = name,
                     author = Converters.toAuthor(authorJson),
@@ -122,7 +125,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     badges = Converters.toBadgeList(badgesJson),
                     url = url,
                     shortDescription = shortDescription,
-                    fandoms = Converters.toFandomList(fandomsJson)
+                    fandoms = Converters.toFandomList(fandomsJson),
+                    partsCount = partsCount
                 )
                 fanfics.add(fanfic)
             } while (cursor.moveToNext())
@@ -142,6 +146,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
             put(COLUMN_URL, fanfic.url)
             put(COLUMN_SHORT_DESCRIPTION, fanfic.shortDescription)
             put(COLUMN_FANDOMS, Converters.fromFandomList(fanfic.fandoms))
+            put(COLUMN_PARTS_COUNT, fanfic.partsCount)
         }
         val rowsAffected = db.update(TABLE_FANFICS, values, "$COLUMN_ID = ?", arrayOf(id.toString()))
         db.close()
@@ -168,7 +173,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     fun exists(fanfic: Fanfic) : Boolean {
         val db = readableDatabase
         val query = "SELECT * FROM $TABLE_FANFICS WHERE $COLUMN_NAME = ? AND $COLUMN_URL = ?"
-        var cursor = db.rawQuery(query, arrayOf(fanfic.name, fanfic.url))
+        val cursor = db.rawQuery(query, arrayOf(fanfic.name, fanfic.url))
         val exists = cursor.moveToFirst()
         cursor.close()
         db.close()

@@ -4,9 +4,18 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
+enum class BadgeType{
+    DIRECTION,
+    RATING,
+    STATUS,
+    LIKES,
+    TROPHY
+}
+
+
 @Parcelize
 @Serializable
 data class Badge(
     val name: String,
-    val icon: String
+    val type: BadgeType
 ) : Parcelable

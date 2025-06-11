@@ -39,6 +39,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: SearchFragmentSaver, callback: () -> (Unit)){
@@ -63,7 +66,7 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
         { FilterChip(filters.statusFinished.value, {filters.statusFinished.value = !filters.statusFinished.value}, label = { Text("Завершён") }) },
         )
 
-    var byRating: List<@Composable () -> Unit> = listOf(
+    val byRating: List<@Composable () -> Unit> = listOf(
         { FilterChip(filters.ratingG.value, {filters.ratingG.value = !filters.ratingG.value}, label = { Text("G") }) },
         { FilterChip(filters.ratingPG.value, {filters.ratingPG.value = !filters.ratingPG.value}, label = { Text("PG-13") }) },
         { FilterChip(filters.ratingR.value, {filters.ratingR.value = !filters.ratingR.value}, label = { Text("R") }) },
@@ -71,11 +74,11 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
         { FilterChip(filters.ratingNC21.value, {filters.ratingNC21.value = !filters.ratingNC21.value}, label = { Text("NC-21") }) },
     )
 
-    var tagGotten = remember { mutableStateOf(listOf<TagSearch>()) }
+    val tagGotten = remember { mutableStateOf(listOf<TagSearch>()) }
     var queryTag by remember { mutableStateOf("") }
     var pageTag by remember { mutableIntStateOf(1) }
 
-    var fandomGotted = remember { mutableStateOf(listOf<FandomSearch>()) }
+    val fandomGotted = remember { mutableStateOf(listOf<FandomSearch>()) }
     var queryFandom by remember { mutableStateOf("") }
     var pageFandom by remember { mutableIntStateOf(1) }
 
@@ -109,6 +112,8 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
             }
         }
     }
+
+
 
     LaunchedEffect(isScrolledToEndFandoms) {
         if(isScrolledToEndFandoms) {
@@ -153,7 +158,7 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
                     Box(){
                         OutlinedTextField(queryTag,
                             {
-                                queryTag = it;
+                                queryTag = it
                                 coroutineScope.launch(Dispatchers.IO) {
                                     Log.d("FicNet", "called onValueChange")
                                     FicbookAPI.TagApi.getByQuery(queryTag, pageTag,callback = { tags ->
@@ -213,7 +218,7 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
                     Box(){
                         OutlinedTextField(queryFandom,
                             {
-                                queryFandom = it;
+                                queryFandom = it
                                 coroutineScope.launch(Dispatchers.IO) {
                                     Log.d("FicNet", "called onValueChange")
                                     FicbookAPI.FandomApi.getByQuery(queryFandom, pageFandom, callback = { fandoms ->
@@ -248,8 +253,6 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
                 }
 
             }
-
-
 
             Text("Направление")
             LazyRow {

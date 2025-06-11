@@ -28,28 +28,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import u.ficappx.R
+import u.ficappx.api.classes.BadgeType
 
 @Composable
 fun BadgeView(badge: Badge){
     var isIcon by remember { mutableStateOf(false) }
     var badgeIconId by remember{ mutableIntStateOf(R.drawable.check_circle) }
     LaunchedEffect(Unit) {
-        when(badge.name){
-            "Заморожен" -> {badgeIconId = R.drawable.pause; isIcon = true}
-            "Завершён" -> {badgeIconId = R.drawable.check_circle; isIcon = true}
-            "В процессе" -> {badgeIconId = R.drawable.hourglass; isIcon = true}
+        if(badge.type == BadgeType.STATUS) {
+            when(badge.name){
+                "Заморожен" -> {badgeIconId = R.drawable.pause; isIcon = true}
+                "Завершён" -> {badgeIconId = R.drawable.check_circle; isIcon = true}
+                "В процессе" -> {badgeIconId = R.drawable.hourglass; isIcon = true}
+            }
+        }
+        if(badge.type == BadgeType.LIKES){
+            badgeIconId = R.drawable.thumb_up
+            isIcon = true
+        }
+        if(badge.type == BadgeType.TROPHY){
+            badgeIconId = R.drawable.trophy
+            isIcon = true
         }
 
+
     }
-    Box(modifier = Modifier.wrapContentWidth(align = Alignment.CenterHorizontally).clip(RoundedCornerShape(4.dp))
+    Box(modifier = Modifier.wrapContentWidth(align = Alignment.CenterHorizontally).clip(RoundedCornerShape(8.dp))
         .background(MaterialTheme.colorScheme.primaryContainer)
         .alpha(0.8f)
     ) {
-        FlowRow(verticalArrangement = Arrangement.Center){
+        FlowRow(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(2.dp, 2.dp)){
             if(isIcon){
                 Icon(painterResource(badgeIconId), "")
             }
-            Text(badge.name, fontSize = 12.sp, modifier = Modifier.padding(4.dp, 2.dp))
+            Text(badge.name, fontSize = 12.sp, modifier = Modifier.padding(4.dp, 0.dp))
         }
     }
 }

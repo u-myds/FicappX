@@ -26,45 +26,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import u.ficappx.api.FicbookAPI
 import u.ficappx.api.classes.Author
 import u.ficappx.api.classes.AuthorInfo
-import u.ficappx.api.classes.Fanfic
 import u.ficappx.ui.theme.FicappXTheme
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorProducer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.rememberAsyncImagePainter
-import coil3.compose.rememberConstraintsSizeResolver
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import u.ficappx.ui.components.defined.AnimatedVisibilityFadeInOut
 import u.ficappx.ui.components.fragments.search.SearchState
 import u.ficappx.ui.components.views.FanficView
 import u.ficappx.ui.components.views.Pagination
-
-@Composable
-fun Int.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }
 
 class AuthorAccountAcitvity : ComponentActivity() {
     @Suppress("DEPRECATION")
@@ -87,7 +71,7 @@ class AuthorAccountAcitvity : ComponentActivity() {
 
     @Composable
     fun AuthorView(author: Author, p: PaddingValues){
-        var coroutineScope = rememberCoroutineScope()
+        val coroutineScope = rememberCoroutineScope()
         var readyData by remember { mutableStateOf<AuthorInfo?>(null) }
         var page by remember { mutableIntStateOf(1) }
         var lastPage by remember { mutableIntStateOf(1) }

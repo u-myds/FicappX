@@ -1,15 +1,6 @@
 package u.ficappx.ui.components.fragments.search
 
 import android.widget.Toast
-import u.ficappx.api.FicbookAPI
-import u.ficappx.api.classes.Fanfic
-import u.ficappx.api.classes.Tag
-import u.ficappx.components.db.DBHelper
-import u.ficappx.components.fragments.SearchFragmentSaver
-import u.ficappx.ui.components.defined.AnimatedVisibilityFadeInOut
-import u.ficappx.ui.components.views.FanficView
-import u.ficappx.ui.components.views.Filters
-import u.ficappx.ui.components.views.Pagination
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,7 +43,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import u.ficappx.api.FicbookAPI
+import u.ficappx.api.classes.Fanfic
+import u.ficappx.api.classes.Tag
 import u.ficappx.api.mobile.FicbookMobileAPI
+import u.ficappx.components.db.DBHelper
+import u.ficappx.components.fragments.SearchFragmentSaver
+import u.ficappx.ui.components.defined.AnimatedVisibilityFadeInOut
+import u.ficappx.ui.components.views.FanficView
+import u.ficappx.ui.components.views.Filters
+import u.ficappx.ui.components.views.Pagination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,9 +74,8 @@ fun SearchFragment(ficbookAPI: FicbookAPI, searchSaver: SearchFragmentSaver, p: 
     var lastTag by remember { mutableStateOf<Tag?>(null) }
 
     var sheetState = rememberModalBottomSheetState()
-    var isFilterVisible = remember { mutableStateOf(false) }
+    val isFilterVisible = remember { mutableStateOf(false) }
 
-    val db = DBHelper(LocalContext.current)
 
     val lazyState = rememberLazyListState()
     val performSearch: (String, Int) -> Unit = { newQuery, newPage ->

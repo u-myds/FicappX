@@ -1,6 +1,3 @@
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 plugins {
     alias(libs.plugins.android.application)
@@ -8,6 +5,18 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
     kotlin("plugin.serialization") version "2.1.20"
+}
+
+
+
+fun getGitHash(): String {
+    return try {
+        providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }.standardOutput.asText.get().replace("\n", "")
+    }
+    catch (e: Exception){
+        project.logger.warn("${e.message} : ${e.cause}")
+        "UNKNOWN"
+    }
 }
 
 android {
@@ -18,10 +27,10 @@ android {
         applicationId = "u.ficappx"
         minSdk = 28
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.0.3"
+        versionCode = 4
+        versionName = "0.0.4"
 
-
+        buildConfigField("String", "GIT_COMMIT_HASH", "\"${getGitHash()}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -33,6 +42,10 @@ android {
                 "proguard-rules.pro"
             )
             applicationIdSuffix = ".release"
+            buildConfigField("String", "GIT_COMMIT_HASH", "\"${getGitHash()}\"")
+        }
+        debug {
+            buildConfigField("String", "GIT_COMMIT_HASH", "\"${getGitHash()}\"")
         }
 
     }
@@ -45,6 +58,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -64,6 +78,7 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.svg)
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

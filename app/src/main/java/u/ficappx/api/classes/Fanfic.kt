@@ -13,5 +13,6 @@ data class Fanfic(
     val badges: List<Badge>,
     val url: String,
     val shortDescription: String,
-    val fandoms: List<Fandom>
+    val fandoms: List<Fandom>,
+    var partsCount: Int = 1
 ) : Parcelable

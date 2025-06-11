@@ -15,6 +15,8 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import u.ficappx.api.classes.AuthorInfo
+import u.ficappx.api.classes.Comment
+import u.ficappx.api.classes.Fanfic
 
 const val SCHEME = "https"
 const val HOST = "ficbook.net"
@@ -30,7 +32,7 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
         }
         val urlB = url.build()
 
-        var response = client.newCall(
+        val response = client.newCall(
             Request.Builder().url(urlB).headers(headers).build()
         ).execute()
 
@@ -58,7 +60,7 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
 
             if(!response.isSuccessful) return null
 
-            var body = response.body!!.string().trimIndent()
+            val body = response.body!!.string().trimIndent()
 
 
             val text = Parser.FanficPage.getText(body)
@@ -142,6 +144,31 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
             }
             val body = response.body!!.string()
             return Parser.AuthorPage.fullParse(body)
+        }
+    }
+
+    object Comments{
+        fun get(url: String, page: Int = 1) : List<Comment>? {
+            val client = OkHttpClient.Builder().build()
+            val urlBuilded = HttpUrl.Builder().scheme(SCHEME).host(HOST)
+                .addPathSegments(url.replaceFirst("/", "").replace("?source=premium&premiumVisit=1", ""))
+                .addPathSegment("comments")
+                .addQueryParameter("p", page.toString())
+                .build()
+            println(urlBuilded.toString())
+            val request = Request.Builder().url(urlBuilded).build()
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) return null
+            return Parser.Comments.get(response.body!!.string())
+        }
+
+
+        fun get(part: Part, page: Int = 1): List<Comment>? {
+            return get(part.url, page)
+        }
+
+        fun get(fanfic: Fanfic, page: Int = 1): List<Comment>? {
+            return get(fanfic.url, page)
         }
     }
 
