@@ -1,12 +1,11 @@
 package u.ficappx.components.db
 
-import u.ficappx.api.classes.Fanfic
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import kotlinx.serialization.json.Json
+import u.ficappx.api.classes.Fanfic
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION ) {
     companion object{

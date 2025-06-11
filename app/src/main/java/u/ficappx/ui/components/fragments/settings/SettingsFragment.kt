@@ -1,6 +1,5 @@
 package u.ficappx.ui.components.fragments.settings
 import android.content.Intent
-import android.content.pm.PackageManager.NameNotFoundException
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

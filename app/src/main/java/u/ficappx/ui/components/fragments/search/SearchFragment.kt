@@ -47,7 +47,6 @@ import u.ficappx.api.FicbookAPI
 import u.ficappx.api.classes.Fanfic
 import u.ficappx.api.classes.Tag
 import u.ficappx.api.mobile.FicbookMobileAPI
-import u.ficappx.components.db.DBHelper
 import u.ficappx.components.fragments.SearchFragmentSaver
 import u.ficappx.ui.components.defined.AnimatedVisibilityFadeInOut
 import u.ficappx.ui.components.views.FanficView

@@ -67,7 +67,6 @@ class FanficInfoActivity : ComponentActivity() {
         val settings = Settings(context)
         var loaded by remember { mutableStateOf(false) }
         var parts by remember { mutableStateOf(listOf<Part>()) }
-        var text by remember { mutableStateOf("") }
 
         var comments by remember { mutableStateOf(listOf<Comment>()) }
         LaunchedEffect(Unit) {
