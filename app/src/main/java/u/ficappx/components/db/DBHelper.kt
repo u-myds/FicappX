@@ -182,7 +182,6 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
     fun putOrDelete(fanfic: Fanfic): Boolean{
         val exists = exists(fanfic)
-        Log.d("Exists", exists.toString())
         if(exists) {
             deleteFanfic(fanfic)
             return false

@@ -39,7 +39,7 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
         if(!response.isSuccessful) return null
         val body = response.body!!.string()
         val pageData = Parser.Search.fullParse(body)
-        Log.d("FicNet","Fics got!")
+
         return pageData
 
     }
@@ -53,7 +53,7 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
                 .replaceFirst("/", "")
                 .replace("?source=premium&premiumVisit=1", "")
             ).build()
-            Log.d("FicRead",url.toString())
+
             val response = tClient.newCall(
                 Request.Builder().url(url).build()
             ).execute()
@@ -64,9 +64,7 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
 
 
             val text = Parser.FanficPage.getText(body)
-            if (text != null) {
-                Log.d("FicRead", text.toString())
-            }
+
             return text
         }
 
@@ -77,7 +75,7 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
                 .replaceFirst("/", "")
                 .replace("?source=premium&premiumVisit=1", "")
             ).build()
-            Log.d("FicRead",url.toString())
+
             val response = tClient.newCall(
                 Request.Builder().url(url).build()
             ).execute()
@@ -98,9 +96,9 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
             val client = OkHttpClient.Builder().build()
             val request = Request.Builder().url("https://ficbook.net/tags/search").post(form).build()
             val response = client.newCall(request).execute()
-            Log.d("FiCNet",response.isSuccessful.toString())
+
             val body = response.body!!.string()
-            Log.d("FicNet", body)
+
             val js = Json { ignoreUnknownKeys = true }
             val responseParsed = js.decodeFromString<SearchTagsResult>(body)
             callback(responseParsed.data.tags)
@@ -119,9 +117,9 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
             val client = OkHttpClient.Builder().build()
             val request = Request.Builder().url("https://ficbook.net/fandoms/search").post(form).build()
             val response = client.newCall(request).execute()
-            Log.d("FiCNet",response.isSuccessful.toString())
+
             val body = response.body!!.string()
-            Log.d("FicNet", body)
+
             val js = Json { ignoreUnknownKeys = true }
             val responseParsed = js.decodeFromString<SearchFandomResult>(body)
             callback(responseParsed.data.result)
@@ -139,7 +137,6 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
             val request = Request.Builder().url(urlBuilded).build()
             val response = client.newCall(request).execute()
             if(!response.isSuccessful) {
-                println("Null on Author on url: ${urlBuilded.toString()}")
                 return null
             }
             val body = response.body!!.string()
@@ -155,7 +152,7 @@ class FicbookAPI(private val client: OkHttpClient, private val headers: Headers)
                 .addPathSegment("comments")
                 .addQueryParameter("p", page.toString())
                 .build()
-            println(urlBuilded.toString())
+
             val request = Request.Builder().url(urlBuilded).build()
             val response = client.newCall(request).execute()
             if (!response.isSuccessful) return null

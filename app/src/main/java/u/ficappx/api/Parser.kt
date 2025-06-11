@@ -172,7 +172,7 @@ class Parser {
             val descriptions = descriptionsFromDocument(parseable)
             val fanfics = mutableListOf<Fanfic>()
             val fandoms = fandomsFromDocument(parseable)
-            println(fandoms)
+
             for(index in names.indices){
                 fanfics.add(
                     Fanfic(

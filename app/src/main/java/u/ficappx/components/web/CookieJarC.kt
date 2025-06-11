@@ -12,16 +12,11 @@ class CookieJarC : CookieJar {
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         val hostCookies = cookiesByHost.computeIfAbsent(url.host) { mutableListOf() }
         hostCookies.addAll(cookies)
-        println("Saved ${cookies.size} cookies for ${url.host}")
-        cookies.forEach { println("- $it") }
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
         val hostCookies = cookiesByHost[url.host] ?: return emptyList()
-        val validCookies = hostCookies
-        println("Loading ${validCookies.size} cookies for ${url.host}")
-        validCookies.forEach { println("- $it") }
-        return validCookies
+        return hostCookies
     }
 
     fun addWebViewCookies(urlString: String, cookiesString: String?) {

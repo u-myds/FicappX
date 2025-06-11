@@ -51,7 +51,7 @@ class NewPartsFanficWorker(val context: Context, params: WorkerParameters): Coro
     }
 
     private fun notifyNewPart(context: Context, fanfic: Fanfic){
-        println("Called notify!")
+
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "new_parts_channel"
         val channelName = "Новая часть"

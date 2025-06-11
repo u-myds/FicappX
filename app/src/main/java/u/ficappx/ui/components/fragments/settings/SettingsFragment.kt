@@ -70,7 +70,7 @@ fun SettingsFragment(p: PaddingValues){
                         checked = settings.use_mobile_api.value == 1,
                         onCheckedChange = {
                             settings.check("use_mobile_api")
-                            println(settings.use_mobile_api.value)
+
                         }
                     )
                 }

@@ -2,24 +2,22 @@ package u.ficappx.api.mobile
 
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import java.security.SecureRandom
 import java.util.Base64
 
-class FicbookMobileAPI() {
-    var xkey = ""
-    val userAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.6723.102 Mobile Safari/537.36 ao2gvvnhkv0t22lo"
+class FicbookMobileAPI {
+    private var xkey = ""
+    private val userAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.6723.102 Mobile Safari/537.36 ao2gvvnhkv0t22lo"
     private val apiKey = "AIzaSyBTmb0GKTjIOqHdFjR0G0RYjFkvJjjJWE0"
     private val projectID = "ficbook-app"
     private val appID = "1:743203295740:android:74d2660d761dfc70a16279"
     private val installUrl = "https://firebaseinstallations.googleapis.com/v1/projects/$projectID/installations"
-    val fetchUrl = "https://firebaseremoteconfig.googleapis.com/v1/projects/$projectID/namespaces/firebase:fetch"
-    val client = OkHttpClient.Builder().build()
+    private val fetchUrl = "https://firebaseremoteconfig.googleapis.com/v1/projects/$projectID/namespaces/firebase:fetch"
+    private val client = OkHttpClient.Builder().build()
     private val json = Json { ignoreUnknownKeys = true; prettyPrint = true }
     private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
 
@@ -48,7 +46,7 @@ class FicbookMobileAPI() {
             sdkVersion = "a:17.0.1"
         )
         val installRequestBodyString = json.encodeToString(installBody)
-        println(installRequestBodyString)
+
             val installRequestBody = installRequestBodyString.toRequestBody(JSON_MEDIA_TYPE)
 
 
@@ -61,7 +59,7 @@ class FicbookMobileAPI() {
             .build()
 
         val installResponse = client.newCall(installRequest).execute()
-        if(!installResponse.isSuccessful) println("install : ${installResponse.code} ${installResponse.body!!.string()}")
+        if(!installResponse.isSuccessful) return null
         val installResponseObject = json.decodeFromString<InstallResponse>(installResponse.body!!.string())
         return installResponseObject
     }
@@ -82,30 +80,30 @@ class FicbookMobileAPI() {
             .post(remoteConfigRequestBodyJson)
             .build()
         val remoteConfigResponse = client.newCall(remoteConfigRequest).execute()
-        if (!remoteConfigResponse.isSuccessful) println("remote ${remoteConfigResponse.code}")
+        if (!remoteConfigResponse.isSuccessful) return null
         val configData = json.decodeFromString<RemoteConfigResponse>(remoteConfigResponse.body!!.string())
         return configData.entries["apiMobileKey"]
     }
 
     fun generate(){
-        var timeStamp = Clock.System.now().epochSeconds
+        Clock.System.now().epochSeconds
         val fid = generateFID()
         val installResponseObject = getInstall(fid)
-        println(installResponseObject.toString())
+
         val authToken = installResponseObject?.authToken?.token ?: return
         val apiMobile = getRemote(fid, authToken) ?: return
-        println(apiMobile.toString())
+
         xkey = generateXKeyHeader(apiMobile)
     }
 
     fun getParts(slug: String): FanficRequest? {
         generate()
         if(xkey == "") return null
-        println(xkey)
+
         val url = "https://fanficlets.xyz/api_mobile/fanfic_parts"
         val body = """{"fanfic_slug": "${slug.replace("?source=premium&premiumVisit=1", "")}"}
         """.trimIndent()
-        println(body)
+
         val partsRequest = Request.Builder()
             .url(url)
             .addHeader("User-Agent", userAgent)
@@ -116,21 +114,20 @@ class FicbookMobileAPI() {
 
         val response = client.newCall(partsRequest).execute()
         val responsebody = response.body!!.string()
-        println("?/ ${response.code}")
-        println(responsebody)
+
         return json.decodeFromString<FanficRequest>(responsebody)
     }
 
     fun getText(partID: String): PartTextRequest? {
         generate()
-        println("call gettext")
+
         if(xkey == "") return null
         val url = "https://fanficlets.xyz/api_mobile/fanfic_part_text"
         val body = """{
             "part_id": $partID
             }
         """.trimIndent()
-        println(body)
+
         val partsRequest = Request.Builder()
             .url(url)
             .addHeader("User-Agent", userAgent)
@@ -141,7 +138,7 @@ class FicbookMobileAPI() {
 
         val response = client.newCall(partsRequest).execute()
         val responsebody = response.body!!.string()
-        println(responsebody)
+
         return json.decodeFromString<PartTextRequest>(responsebody)
     }
 }

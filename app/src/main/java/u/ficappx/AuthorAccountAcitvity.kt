@@ -117,15 +117,15 @@ class AuthorAccountAcitvity : ComponentActivity() {
                     if(readyData != null){
                         item("AuthorImage") {
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
-                                println(readyData!!.imageUrl)
+
                                 SubcomposeAsyncImage(model = ImageRequest.Builder(LocalContext.current)
                                     .data(readyData!!.imageUrl)
                                     .crossfade(true)
                                     .build(),
                                     contentDescription = null,
                                     loading = { CircularProgressIndicator() },
-                                    onError = { println(it) },
-                                    onSuccess = { println(it) },
+                                    onError = {  },
+                                    onSuccess = {  },
                                     modifier = Modifier.size(100.dp, 100.dp).clip(CircleShape))
                                 Spacer(Modifier.size(16.dp, 0.dp))
                                 Text(readyData!!.name, fontSize = 24.sp, style = MaterialTheme.typography.bodyMedium)

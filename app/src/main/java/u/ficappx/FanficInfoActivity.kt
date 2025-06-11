@@ -92,7 +92,6 @@ class FanficInfoActivity : ComponentActivity() {
             }
             coroutineScope.launch(Dispatchers.IO) {
                 val t = FicbookAPI.Comments.get(fanfic)
-                println(t)
                 if (t != null){
                     comments = t
                 }
@@ -117,7 +116,6 @@ class FanficInfoActivity : ComponentActivity() {
                 }
                 else {
                     if(loaded){
-                        println(parts)
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             item {
                                 Column(modifier = Modifier.fillMaxSize()) {

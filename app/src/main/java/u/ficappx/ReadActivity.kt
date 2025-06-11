@@ -65,7 +65,7 @@ class ReadActivity : ComponentActivity() {
 
             if (url != null) url = url.replace("#part_content", "")
 
-            Log.d("FicNet", "url: $url")
+
             FicappXTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     if(url != null) FanficTextView(url, innerPadding)
@@ -100,7 +100,7 @@ class ReadActivity : ComponentActivity() {
             }
             else{
                 coroutineScope.launch(Dispatchers.IO) {
-                    Log.d("FicNet", url)
+
                     val tempText = FicbookAPI.fanficText(url)
                     if(tempText != null){
                         text = buildAnnotatedString {

@@ -104,7 +104,7 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
         if(isScrolledToEndTags) {
             pageTag += 1
             coroutineScope.launch(Dispatchers.IO) {
-                Log.d("FicNet", "called onValueChange")
+
                 FicbookAPI.TagApi.getByQuery(queryTag, pageTag ,callback = { tags ->
                     tagGotten.value = tagGotten.value.plus(tags)
                 }
@@ -119,7 +119,7 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
         if(isScrolledToEndFandoms) {
             pageFandom += 1
             coroutineScope.launch(Dispatchers.IO) {
-                Log.d("FicNet", "called onValueChange")
+
                 FicbookAPI.FandomApi.getByQuery(queryFandom, pageFandom ,callback = { tags ->
                     fandomGotted.value = fandomGotted.value.plus(tags)
                 }
@@ -160,7 +160,7 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
                             {
                                 queryTag = it
                                 coroutineScope.launch(Dispatchers.IO) {
-                                    Log.d("FicNet", "called onValueChange")
+
                                     FicbookAPI.TagApi.getByQuery(queryTag, pageTag,callback = { tags ->
                                         tagGotten.value = tags
                                     }
@@ -220,7 +220,7 @@ fun Filters(visible: MutableState<Boolean>, state: SheetState, searchSaver: Sear
                             {
                                 queryFandom = it
                                 coroutineScope.launch(Dispatchers.IO) {
-                                    Log.d("FicNet", "called onValueChange")
+
                                     FicbookAPI.FandomApi.getByQuery(queryFandom, pageFandom, callback = { fandoms ->
                                         fandomGotted.value = fandoms
                                     }
