@@ -110,7 +110,6 @@ class MainActivity : ComponentActivity() {
                                 state = currentState
                                 )
                         } }) { innerPadding ->
-                                notifyNewPart(context, testFanfic)
                                 if (cookiesPresentedAndValid.value && ficbookAPI != null) {
                                     AnimatedVisibilityFadeInOut(
                                         visible = currentState == FragmentState.SEARCH
