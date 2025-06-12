@@ -22,6 +22,7 @@ class NewPartsFanficWorker(val context: Context, params: WorkerParameters): Coro
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
             try{
+
                 val db = DBHelper(context)
                 val fanfics = db.getAllFanfics()
                 val client = OkHttpClient()
@@ -50,29 +51,31 @@ class NewPartsFanficWorker(val context: Context, params: WorkerParameters): Coro
 
     }
 
-    private fun notifyNewPart(context: Context, fanfic: Fanfic){
+    companion object {
+        fun notifyNewPart(context: Context, fanfic: Fanfic) {
+            println("Notify")
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val channelId = "new_parts_channel"
+            val channelName = "Новая часть"
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channelId = "new_parts_channel"
-        val channelName = "Новая часть"
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Уведомления о новых частях"
+            }
+            notificationManager.createNotificationChannel(channel)
+            val notification = NotificationCompat.Builder(context, channelId)
+                .setContentTitle("Новая часть")
+                .setContentText("Вышла новая часть \"${fanfic.name}\" автора ${fanfic.author.name}")
+                .setSmallIcon(R.drawable.icon_no_background)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .build()
 
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = "Уведомления о новых частях"
+            notificationManager.notify(1, notification)
         }
-        notificationManager.createNotificationChannel(channel)
-
-        val notification = NotificationCompat.Builder(context, channelId)
-            .setContentTitle("Новая часть")
-            .setContentText("Вышла новая часть \"${fanfic.name}\" автора ${fanfic.author.name}")
-            .setSmallIcon(R.drawable.icon)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(1, notification)
     }
 }

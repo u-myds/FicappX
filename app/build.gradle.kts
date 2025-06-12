@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.coil.svg)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

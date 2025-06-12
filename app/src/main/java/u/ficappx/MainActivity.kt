@@ -35,8 +35,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,16 +48,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import u.ficappx.api.FicbookAPI
+import u.ficappx.api.classes.testFanfic
 import u.ficappx.api.mobile.FicbookMobileAPI
 import u.ficappx.background.NewPartsFanficWorker
+import u.ficappx.background.NewPartsFanficWorker.Companion.notifyNewPart
 import u.ficappx.components.fragments.SearchFragmentSaver
 import u.ficappx.components.web.CookieJarC
 import u.ficappx.ui.components.NavBar
@@ -79,6 +90,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         val searchSaver = SearchFragmentSaver()
+
         setupNotifications()
         enableEdgeToEdge()
         setContent {
@@ -88,7 +100,6 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val mobileApi = FicbookMobileAPI()
             exceptionHandler(context)
-
             FicappXTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     bottomBar = {
@@ -99,7 +110,7 @@ class MainActivity : ComponentActivity() {
                                 state = currentState
                                 )
                         } }) { innerPadding ->
-
+                                notifyNewPart(context, testFanfic)
                                 if (cookiesPresentedAndValid.value && ficbookAPI != null) {
                                     AnimatedVisibilityFadeInOut(
                                         visible = currentState == FragmentState.SEARCH
@@ -128,6 +139,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
     @SuppressLint("SetJavaScriptEnabled")
     @Composable
@@ -222,7 +234,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setupNotifications(){
+    private fun setupNotifications(): PeriodicWorkRequest {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -237,5 +249,6 @@ class MainActivity : ComponentActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             dataSync
         )
+        return dataSync
     }
 }
